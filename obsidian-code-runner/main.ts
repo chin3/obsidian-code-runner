@@ -19,6 +19,11 @@ interface CodeRunnerSettings {
   enablePython: boolean;
   enableJS: boolean;
   enableLLM: boolean;
+  // LLM Settings
+  llmProvider: "ollama" | "openai" | "auto";
+  openaiApiKey: string;
+  ollamaModel: string;
+  ollamaUrl: string;
 }
 
 const DEFAULT_SETTINGS: CodeRunnerSettings = {
@@ -27,6 +32,11 @@ const DEFAULT_SETTINGS: CodeRunnerSettings = {
   enablePython: true,
   enableJS: true,
   enableLLM: false,
+  // LLM Defaults
+  llmProvider: "auto",
+  openaiApiKey: "",
+  ollamaModel: "llama2",
+  ollamaUrl: "http://localhost:11434",
 };
 
 interface RunRequest {
@@ -344,7 +354,15 @@ export default class CodeRunnerPlugin extends Plugin {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode, prompt }),
+        body: JSON.stringify({
+          mode,
+          prompt,
+          // Send LLM settings to backend
+          provider: this.settings.llmProvider,
+          openai_api_key: this.settings.openaiApiKey || undefined,
+          ollama_model: this.settings.ollamaModel,
+          ollama_url: this.settings.ollamaUrl,
+        }),
       });
 
       if (!res.ok) {
@@ -469,7 +487,15 @@ export default class CodeRunnerPlugin extends Plugin {
         const res = await fetch(url, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ mode, prompt: code }),
+          body: JSON.stringify({
+            mode,
+            prompt: code,
+            // Send LLM settings
+            provider: this.settings.llmProvider,
+            openai_api_key: this.settings.openaiApiKey || undefined,
+            ollama_model: this.settings.ollamaModel,
+            ollama_url: this.settings.ollamaUrl,
+          }),
         });
 
         if (!res.ok) {
@@ -604,8 +630,71 @@ class CodeRunnerSettingTab extends PluginSettingTab {
           .onChange(async (val) => {
             this.plugin.settings.enableLLM = val;
             await this.plugin.saveSettings();
+            // Refresh to show/hide LLM settings
+            this.display();
           })
       );
+
+    // Only show LLM settings if LLM blocks are enabled
+    if (this.plugin.settings.enableLLM) {
+      containerEl.createEl("h3", { text: "LLM Configuration" });
+
+      new Setting(containerEl)
+        .setName("LLM Provider")
+        .setDesc("Choose which AI service to use")
+        .addDropdown((dropdown) =>
+          dropdown
+            .addOption("auto", "Auto (try Ollama, then OpenAI)")
+            .addOption("ollama", "Ollama (Local)")
+            .addOption("openai", "OpenAI (Cloud)")
+            .setValue(this.plugin.settings.llmProvider)
+            .onChange(async (val) => {
+              this.plugin.settings.llmProvider = val as "auto" | "ollama" | "openai";
+              await this.plugin.saveSettings();
+            })
+        );
+
+      new Setting(containerEl)
+        .setName("OpenAI API Key")
+        .setDesc("Your OpenAI API key (kept secure locally)")
+        .addText((text) => {
+          text
+            .setPlaceholder("sk-...")
+            .setValue(this.plugin.settings.openaiApiKey)
+            .onChange(async (val) => {
+              this.plugin.settings.openaiApiKey = val;
+              await this.plugin.saveSettings();
+            });
+          // Mask the input for security
+          text.inputEl.type = "password";
+        });
+
+      new Setting(containerEl)
+        .setName("Ollama Model")
+        .setDesc("Which Ollama model to use (e.g., llama2, mistral, codellama)")
+        .addText((text) =>
+          text
+            .setPlaceholder("llama2")
+            .setValue(this.plugin.settings.ollamaModel)
+            .onChange(async (val) => {
+              this.plugin.settings.ollamaModel = val;
+              await this.plugin.saveSettings();
+            })
+        );
+
+      new Setting(containerEl)
+        .setName("Ollama URL")
+        .setDesc("URL where Ollama is running")
+        .addText((text) =>
+          text
+            .setPlaceholder("http://localhost:11434")
+            .setValue(this.plugin.settings.ollamaUrl)
+            .onChange(async (val) => {
+              this.plugin.settings.ollamaUrl = val;
+              await this.plugin.saveSettings();
+            })
+        );
+    }
   }
 }
 

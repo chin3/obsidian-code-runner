@@ -8,14 +8,21 @@ Execute Python and JavaScript code blocks directly in your notes with persistent
 
 ## ✨ Features
 
-- **🐍 Python & JavaScript** - Run code blocks in reading and editor mode
-- **🧠 Kernel Mode** - Persistent Python sessions (variables survive across blocks) - **ENABLED BY DEFAULT**
-- **⌨️ Editor Mode** - Execute with `Cmd/Ctrl+Shift+Enter` hotkey
-- **📊 Inline Output** - Results appear directly below code blocks
-- **⚙️ Settings Tab** - Configure backend URL, languages, and options
-- **🤖 LLM Framework** - Ready for OpenAI/Ollama integration
-- **🎨 Auto Output Blocks** - Editor mode writes ` ```output` to markdown
-- **❌ Error Handling** - Visual feedback for failures
+### Core Execution
+- ✅ **Python & JavaScript** - Run code blocks in reading and editor mode
+- ✅ **Kernel Mode** - Persistent Python sessions (variables survive across blocks) - **ENABLED BY DEFAULT**
+- ✅ **Editor Mode** - Execute with `Cmd/Ctrl+Shift+Enter` hotkey
+- ✅ **Floating Run Button** - Hover over code blocks in edit mode to see run button
+- ✅ **Inline Output** - Results appear directly below code blocks
+- ✅ **Error Handling** - Visual feedback for failures
+
+### Advanced Features
+- ✅ **Settings Tab** - Configure everything in Obsidian UI (no environment variables!)
+- ✅ **LLM Blocks** - Execute AI prompts with ` ```llm` and ` ```agent`
+- ✅ **LLM Configuration UI** - Choose provider (Ollama/OpenAI), set API keys, select models
+- ✅ **Real AI Integration** - Ollama (local, private) or OpenAI (cloud) support
+- ✅ **Reading Mode** - Click Run buttons on code blocks
+- ✅ **Auto Output Blocks** - Editor mode writes ` ```output` to markdown
 
 ---
 
@@ -91,13 +98,20 @@ print(f"{name} is {age} years old")
 
 Access: **Settings → Community Plugins → Obsidian Code Runner**
 
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Backend URL | `http://localhost:8000/run` | Where code executes |
-| Kernel Mode | **ON** | Persistent Python sessions |
-| Enable Python | ON | Python blocks |
-| Enable JavaScript | ON | JavaScript blocks |
-| Enable LLM/Agent | OFF | AI prompts (placeholder) |
+### Basic Settings
+- **Backend URL** - Where code execution requests are sent
+- **Use Kernel Mode** - Persistent Python sessions (default: ON)
+- **Enable Python** - Toggle Python execution
+- **Enable JavaScript** - Toggle JavaScript execution
+- **Enable LLM/Agent blocks** - Toggle AI prompt execution
+
+### LLM Configuration (when LLM blocks enabled)
+- **LLM Provider** - Choose `Auto`, `Ollama` (local), or `OpenAI` (cloud)
+- **OpenAI API Key** - Your OpenAI API key (stored securely in vault)
+- **Ollama Model** - Which model to use (e.g., llama2, mistral, codellama)
+- **Ollama URL** - Where Ollama is running (default: http://localhost:11434)
+
+**No environment variables needed!** Configure everything in the UI.
 
 ---
 
@@ -220,11 +234,16 @@ runner/
 
 ## 🚧 Roadmap
 
+### Recently Added ✅
+- ✅ Real LLM integration (Ollama/OpenAI)
+- ✅ LLM Configuration UI (no env vars needed!)
+- ✅ Floating run button in edit mode
+- ✅ Kernel mode enabled by default
+
 ### Coming Soon
-- ✅ Real LLM integration (OpenAI/Ollama)
-- ✅ Kernel restart button
-- ✅ More languages (Ruby, Go, Rust, R)
-- ✅ Rich output (images, plots, tables)
+- Kernel restart button
+- Additional languages (Ruby, Go, Rust, R)
+- Rich output (images, plots, tables)
 
 ### Future
 - Per-note kernel sessions

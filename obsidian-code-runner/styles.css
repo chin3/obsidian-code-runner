@@ -33,16 +33,21 @@
   background-color: var(--interactive-hover);
 }
 
+/* Output blocks with scrolling */
 .code-runner-output {
   margin: 0;
-  padding: 6px 10px;
+  padding: 10px 12px;
   background-color: var(--background-primary-alt);
   border-top: 1px solid var(--background-modifier-border);
   font-size: 0.85em;
+  max-height: 400px;
+  overflow-y: auto;
+  overflow-x: auto;
 }
 
 .code-runner-output code {
   white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 .code-runner-output-error {
@@ -50,20 +55,28 @@
   border-top: 1px solid rgba(255, 0, 0, 0.3);
 }
 
-/* Edit mode run button */
-.code-runner-edit-button {
-  display: inline-block;
-  margin-left: 8px;
-  padding: 2px 8px;
-  font-size: 0.8rem;
-  border-radius: 4px;
-  border: 1px solid var(--interactive-normal);
-  background-color: var(--interactive-normal);
-  color: var(--text-normal);
-  cursor: pointer;
-  vertical-align: middle;
+/* Custom scrollbar styling for output blocks */
+.code-runner-output::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.code-runner-edit-button:hover {
-  background-color: var(--interactive-hover);
+.code-runner-output::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 4px;
+}
+
+.code-runner-output::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+.code-runner-output::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Scrollbar for Firefox */
+.code-runner-output {
+  scrollbar-width: thin;
+  scrollbar-color: var(--background-modifier-border) var(--background-secondary);
 }
