@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-code-runner",
+  "name": "Obsidian Code Runner",
+  "version": "0.0.1",
+  "minAppVersion": "1.5.0",
+  "description": "Run code blocks (Python/JS) directly inside Obsidian, Jupyter-style.",
+  "author": "Nathan Chin",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}

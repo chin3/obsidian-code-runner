@@ -1,0 +1,14 @@
+# Build output
+main.js
+main.js.map
+*.js.map
+
+# npm
+node_modules
+
+# IDE
+.idea
+.vscode
+
+# OS
+.DS_Store
