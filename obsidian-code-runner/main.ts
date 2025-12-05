@@ -23,7 +23,7 @@ interface CodeRunnerSettings {
 
 const DEFAULT_SETTINGS: CodeRunnerSettings = {
   backendUrl: "http://localhost:8000/run",
-  useKernel: false,
+  useKernel: true,  // Enable kernel mode by default
   enablePython: true,
   enableJS: true,
   enableLLM: false,
@@ -77,6 +77,73 @@ export default class CodeRunnerPlugin extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+  }
+
+  //
+  // CODEMIRROR EXTENSION - EDIT MODE RUN BUTTONS
+  //
+
+  private createEditorExtension() {
+    const plugin = this;
+
+    return EditorView.decorations.compute(["doc", "selection"], (state) => {
+      const decorations: any[] = [];
+      const { doc } = state;
+
+      // Only show in live preview mode
+      if (!state.field(editorLivePreviewField)) {
+        return [];
+      }
+
+      let inCodeBlock = false;
+      let codeBlockStart = 0;
+      let language = "";
+
+      for (let i = 1; i <= doc.lines; i++) {
+        const line = doc.line(i);
+        const text = line.text;
+
+        if (text.trim().startsWith("```")) {
+          if (!inCodeBlock) {
+            // Opening fence
+            const match = text.trim().match(/^```(\w+)?/);
+            if (match) {
+              language = (match[1] || "").toLowerCase();
+              const isPython = language === "python";
+              const isJS = language === "javascript" || language === "js";
+              const isLLM = language === "llm" || language === "agent";
+
+              // Check if language is supported and enabled
+              const shouldShow =
+                (isPython && plugin.settings.enablePython) ||
+                (isJS && plugin.settings.enableJS) ||
+                (isLLM && plugin.settings.enableLLM);
+
+              if (shouldShow) {
+                inCodeBlock = true;
+                codeBlockStart = i;
+              }
+            }
+          } else {
+            // Closing fence - add run button widget
+            if (inCodeBlock) {
+              const widget = new RunButtonWidget(plugin, codeBlockStart, i, language);
+              decorations.push({
+                from: line.from,
+                to: line.from,
+                value: EditorView.decorations.widget({
+                  widget,
+                  side: 1,
+                })
+              });
+              inCodeBlock = false;
+            }
+          }
+        }
+      }
+
+      return decorations;
+    });
   }
 
   //
@@ -539,5 +606,174 @@ class CodeRunnerSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           })
       );
+  }
+}
+
+//
+// RUN BUTTON WIDGET FOR EDIT MODE
+//
+
+class RunButtonWidget {
+  plugin: CodeRunnerPlugin;
+  startLine: number;
+  endLine: number;
+  language: string;
+
+  constructor(plugin: CodeRunnerPlugin, startLine: number, endLine: number, language: string) {
+    this.plugin = plugin;
+    this.startLine = startLine;
+    this.endLine = endLine;
+    this.language = language;
+  }
+
+  toDOM() {
+    const button = document.createElement("button");
+    button.className = "code-runner-edit-button";
+
+    const isLLM = this.language === "llm" || this.language === "agent";
+    button.textContent = isLLM
+      ? (this.language === "llm" ? "💬 Run" : "🤖 Run")
+      : "▶";
+
+    button.onclick = async (e) => {
+      e.preventDefault();
+
+      // Get the active editor
+      const activeView = this.plugin.app.workspace.getActiveViewOfType(MarkdownView);
+      if (!activeView) return;
+
+      const editor = activeView.editor;
+
+      // Extract code from the block
+      const codeLines: string[] = [];
+      for (let i = this.startLine; i < this.endLine; i++) {
+        codeLines.push(editor.getLine(i));
+      }
+      const code = codeLines.join("\n");
+
+      // Position cursor at the end of the block for output insertion
+      editor.setCursor(this.endLine);
+
+      // Run the code using the plugin's method
+      await this.executeCode(editor, code);
+    };
+
+    return button;
+  }
+
+  async executeCode(editor: Editor, code: string) {
+    const isLLM = this.language === "llm" || this.language === "agent";
+
+    // Find or create output block
+    let outputStart = this.endLine + 1;
+    let outputEnd = outputStart;
+    let hasOutputBlock = false;
+
+    if (outputStart < editor.lineCount()) {
+      const maybeOutputFence = editor.getLine(outputStart).trim();
+      if (maybeOutputFence.startsWith("```output")) {
+        hasOutputBlock = true;
+        outputEnd = outputStart + 1;
+        while (outputEnd < editor.lineCount()) {
+          const l = editor.getLine(outputEnd);
+          if (l.trim().startsWith("```")) break;
+          outputEnd++;
+        }
+        if (outputEnd < editor.lineCount()) outputEnd++;
+      }
+    }
+
+    const insertOutput = (output: string) => {
+      const outputBlock = [
+        "```output",
+        output || "<no output>",
+        "```",
+        "",
+      ].join("\n");
+
+      if (hasOutputBlock) {
+        editor.replaceRange(
+          outputBlock,
+          { line: outputStart, ch: 0 },
+          { line: outputEnd, ch: 0 }
+        );
+      } else {
+        editor.replaceRange(
+          "\n" + outputBlock,
+          { line: this.endLine + 1, ch: 0 }
+        );
+      }
+    };
+
+    // Handle LLM blocks
+    if (isLLM) {
+      if (!this.plugin.settings.enableLLM) {
+        new Notice("LLM blocks are disabled in settings.");
+        return;
+      }
+
+      const mode = this.language === "agent" ? "agent" : "llm";
+      const url = this.plugin.settings.backendUrl.replace(/\/run$/, "/llm");
+
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode, prompt: code }),
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          insertOutput(`Error: HTTP ${res.status}\n${text}`);
+          return;
+        }
+
+        const data = (await res.json()) as LLMResponse;
+        insertOutput(data.output);
+      } catch (err: any) {
+        insertOutput(`Error contacting LLM backend:\n${String(err)}`);
+      }
+      return;
+    }
+
+    // Handle regular code blocks
+    const isPython = this.language === "python";
+    const isJS = this.language === "javascript" || this.language === "js";
+
+    if (!isPython && !isJS) {
+      new Notice("Language not supported.");
+      return;
+    }
+
+    try {
+      const res = await fetch(this.plugin.settings.backendUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language: isJS ? "javascript" : "python",
+          code,
+          kernel: this.plugin.settings.useKernel && isPython,
+        } as RunRequest),
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        insertOutput(`Error: HTTP ${res.status}\n${text}`);
+        return;
+      }
+
+      const data = (await res.json()) as RunResponse;
+      let out = "";
+      if (data.stdout) out += data.stdout;
+      if (data.stderr) {
+        if (out.length > 0) out += "\n";
+        out += `stderr:\n${data.stderr}`;
+      }
+      if (!out) out = `<no output> (exit code ${data.exitCode})`;
+
+      insertOutput(out);
+    } catch (err: any) {
+      insertOutput(`Error contacting backend:\n${String(err)}`);
+    }
   }
 }

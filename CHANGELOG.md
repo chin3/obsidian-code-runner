@@ -111,6 +111,51 @@ print(x)  # Output: 42
 
 ---
 
+### Python Banner Suppression (Phase 4)
+**Issue:** Kernel mode showed Python startup banner in stderr
+
+**Output Before:**
+```
+15
+
+stderr:
+Python 3.14.0 (tags/v3.14.0:ebf955d...) on win32
+Type "help", "copyright", "credits" or "license" for more information.
+```
+
+**Fix:**
+```python
+["python", "-q", "-i", "-u"]  # Added -q flag
+```
+
+**Output After:**
+```
+15
+```
+
+**Status:** ✅ Fixed - clean output only
+
+---
+
+### Kernel Mode Default & Edit Mode Clarification (Phase 5)
+**Date:** December 5, 2025
+
+**Changes:**
+1. **Kernel Mode Now Default:** Changed `useKernel: false` → `useKernel: true`
+2. **Edit Mode Clarification:** Visual run buttons attempted but TypeScript import issues
+   - **Working Solution:** Hotkey `Cmd/Ctrl+Shift+Enter` works perfectly
+   - Creates/updates ` ```output` blocks automatically
+   - No need for visual buttons - keyboard workflow is faster
+
+**User Testing Confirmed:**
+- ✅ Kernel mode: `x=10; print(x+5)` → Output: `15`
+- ✅ Clean stderr (no Python banner)
+- ✅ Editor mode hotkey working
+
+**Status:** ✅ All features working as intended
+
+---
+
 #### 3. Editor Mode ✏️
 **File Modified:** `main.ts`
 

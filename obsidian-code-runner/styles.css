@@ -49,3 +49,21 @@
   background-color: rgba(255, 0, 0, 0.06);
   border-top: 1px solid rgba(255, 0, 0, 0.3);
 }
+
+/* Edit mode run button */
+.code-runner-edit-button {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+  border: 1px solid var(--interactive-normal);
+  background-color: var(--interactive-normal);
+  color: var(--text-normal);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.code-runner-edit-button:hover {
+  background-color: var(--interactive-hover);
+}
