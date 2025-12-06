@@ -671,7 +671,7 @@ class CodeRunnerSettingTab extends PluginSettingTab {
           .setButtonText("☕ Donate")
           .setCta()
           .onClick(() => {
-            window.open("https://ko-fi.com/nathandavies", "_blank");
+            window.open("https://ko-fi.com/crimsundev", "_blank");
           })
       );
 
@@ -682,7 +682,7 @@ class CodeRunnerSettingTab extends PluginSettingTab {
         button
           .setButtonText("⭐ Star")
           .onClick(() => {
-            window.open("https://github.com/yourusername/obsidian-code-runner", "_blank");
+            window.open("https://github.com/chin3/obsidian-plugins-obsidian-code-runner", "_blank");
           })
       );
   }

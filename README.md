@@ -364,8 +364,8 @@ Built with:
 
 ## 📫 Contact
 
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Issues: [Report a bug](https://github.com/yourusername/obsidian-code-runner/issues)
+- GitHub: [@chin3](https://github.com/chin3)
+- Issues: [Report a bug](https://github.com/chin3/obsidian-plugins-obsidian-code-runner/issues)
 
 ---
 
