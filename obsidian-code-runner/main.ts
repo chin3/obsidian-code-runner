@@ -69,6 +69,11 @@ export default class CodeRunnerPlugin extends Plugin {
       this.enhanceCodeBlocks(el);
     });
 
+    // Edit mode: make output blocks scrollable
+    this.registerMarkdownPostProcessor((el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+      this.styleOutputBlocks(el);
+    });
+
     // Editor mode: command to run current fenced block
     this.addCommand({
       id: "run-current-code-block",
@@ -191,6 +196,29 @@ export default class CodeRunnerPlugin extends Plugin {
       if (pre.parentElement && pre.parentElement.classList.contains("code-runner-wrapper")) return;
 
       this.wrapExecutableBlock(pre, codeEl as HTMLElement, isJS ? "javascript" : "python");
+    });
+  }
+
+  private styleOutputBlocks(container: HTMLElement) {
+    // Find all output blocks (```output) and make them scrollable
+    const codeBlocks = container.querySelectorAll("pre > code");
+    codeBlocks.forEach((codeEl) => {
+      const languageClass = Array.from(codeEl.classList).find((cls) =>
+        cls.startsWith("language-")
+      );
+
+      if (languageClass && languageClass.includes("output")) {
+        const pre = codeEl.parentElement;
+        if (!pre) return;
+
+        // Apply scrollable styling to output blocks
+        pre.style.maxHeight = "400px";
+        pre.style.overflowY = "auto";
+        pre.style.overflowX = "auto";
+        pre.style.padding = "10px 12px";
+        pre.style.backgroundColor = "var(--background-primary-alt)";
+        pre.style.borderRadius = "4px";
+      }
     });
   }
 
@@ -695,6 +723,39 @@ class CodeRunnerSettingTab extends PluginSettingTab {
             })
         );
     }
+
+    // Support section
+    containerEl.createEl("hr", { cls: "setting-item-separator" });
+    containerEl.createEl("h3", { text: "💝 Support This Project" });
+
+    const supportDesc = containerEl.createEl("p", {
+      text: "Code Runner is free and open source. If it saves you time, consider supporting development!",
+    });
+    supportDesc.style.opacity = "0.8";
+    supportDesc.style.marginBottom = "1em";
+
+    new Setting(containerEl)
+      .setName("Buy me a coffee")
+      .setDesc("One-time donation via Ko-fi")
+      .addButton((button) =>
+        button
+          .setButtonText("☕ Donate")
+          .setCta()
+          .onClick(() => {
+            window.open("https://ko-fi.com/nathandavies", "_blank");
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Star on GitHub")
+      .setDesc("Show your support with a ⭐")
+      .addButton((button) =>
+        button
+          .setButtonText("⭐ Star")
+          .onClick(() => {
+            window.open("https://github.com/yourusername/obsidian-code-runner", "_blank");
+          })
+      );
   }
 }
 

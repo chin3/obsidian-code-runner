@@ -72,48 +72,35 @@ OLLAMA_AVAILABLE = check_ollama_available()
 
 class PythonKernel:
     def __init__(self):
-        self.process = subprocess.Popen(
-            ["python", "-q", "-i", "-u"],  # -q suppresses startup banner
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            bufsize=1
-        )
-        self.output_queue = queue.Queue()
-        threading.Thread(target=self._read_stdout, daemon=True).start()
-        threading.Thread(target=self._read_stderr, daemon=True).start()
-
-    def _read_stdout(self):
-        for line in self.process.stdout:
-            self.output_queue.put(("stdout", line))
-
-    def _read_stderr(self):
-        for line in self.process.stderr:
-            self.output_queue.put(("stderr", line))
+        self.globals = {}
+        self.locals = {}
 
     def run(self, code: str):
-        if self.process.poll() is not None:
-            # restarted if dead
-            self.__init__()
-
-        self.process.stdin.write(code + "\n")
-        self.process.stdin.flush()
-
-        stdout = ""
-        stderr = ""
-
-        # Best-effort: read whatever comes in for a short time
-        while True:
-            try:
-                typ, line = self.output_queue.get(timeout=0.05)
-                if typ == "stdout":
-                    stdout += line
-                else:
-                    stderr += line
-            except queue.Empty:
-                break
-
+        import io
+        import sys
+        from contextlib import redirect_stdout, redirect_stderr
+        
+        # Convert tabs to spaces
+        code = code.replace('\t', '    ')
+        
+        # Capture stdout and stderr
+        stdout_capture = io.StringIO()
+        stderr_capture = io.StringIO()
+        
+        try:
+            with redirect_stdout(stdout_capture), redirect_stderr(stderr_capture):
+                # Execute code in persistent namespace
+                exec(code, self.globals, self.locals)
+            
+            stdout = stdout_capture.getvalue()
+            stderr = stderr_capture.getvalue()
+            
+        except Exception as e:
+            # Capture exceptions as stderr
+            import traceback
+            stdout = stdout_capture.getvalue()
+            stderr = stderr_capture.getvalue() + traceback.format_exc()
+        
         return stdout, stderr
 
 

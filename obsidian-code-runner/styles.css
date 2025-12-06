@@ -33,7 +33,7 @@
   background-color: var(--interactive-hover);
 }
 
-/* Output blocks with scrolling */
+/* Output blocks with scrolling (Reading Mode) */
 .code-runner-output {
   margin: 0;
   padding: 10px 12px;
@@ -79,4 +79,34 @@
 .code-runner-output {
   scrollbar-width: thin;
   scrollbar-color: var(--background-modifier-border) var(--background-secondary);
+}
+
+/* Output blocks in Edit Mode - Force scrollable */
+pre:has(> code.language-output) {
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  padding: 10px 12px;
+  background-color: var(--background-primary-alt);
+  border-radius: 4px;
+}
+
+/* Scrollbar for output blocks in edit mode */
+pre:has(> code.language-output)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+pre:has(> code.language-output)::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+  border-radius: 4px;
+}
+
+pre:has(> code.language-output)::-webkit-scrollbar-thumb {
+  background: var(--background-modifier-border);
+  border-radius: 4px;
+}
+
+pre:has(> code.language-output)::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

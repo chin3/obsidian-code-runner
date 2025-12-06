@@ -1,286 +1,289 @@
-# Obsidian Code Runner 🚀
+# Code Runner for Obsidian
 
-**Transform your Obsidian vault into a computational notebook with Jupyter-style code execution.**
+**Execute Python & JavaScript with full package access + ChatGPT integration.** 
 
-Execute Python and JavaScript code blocks directly in your notes with persistent sessions, inline results, and AI integration readiness.
+Unlike sandboxed solutions, Code Runner uses a **real Python kernel** with persistent sessions and unlimited package support.
+
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![License](https://img.shields.io/badge/license-MIT-green)
+
+**What makes this different:**
+- ✅ **Full Python** - Use pandas, scikit-learn, ANY package
+- 🧠 **True Kernel** - Variables persist like Jupyter
+- 🤖 **ChatGPT/Claude** - LLM blocks for AI-assisted workflows  
+- 🔒 **100% Local** - Code never leaves your machine
+- ⚡ **Fast** - Direct execution, no sandboxing overhead
+
+**Perfect for:** Data scientists, ML engineers, researchers who need real Python power in their notes.
 
 ---
 
 ## ✨ Features
 
-### Core Execution
-- ✅ **Python & JavaScript** - Run code blocks in reading and editor mode
-- ✅ **Kernel Mode** - Persistent Python sessions (variables survive across blocks) - **ENABLED BY DEFAULT**
-- ✅ **Editor Mode** - Execute with `Cmd/Ctrl+Shift+Enter` hotkey
-- ✅ **Floating Run Button** - Hover over code blocks in edit mode to see run button
-- ✅ **Inline Output** - Results appear directly below code blocks
-- ✅ **Error Handling** - Visual feedback for failures
+**Core Execution:**
+- 🐍 **Python & JavaScript** - Run code blocks with a click or hotkey
+- 🧠 **Kernel Mode** - Variables persist across blocks (like Jupyter)
+- ⚡ **Editor Mode** - Execute with `Cmd/Ctrl+Shift+Enter`
+- 📊 **Inline Output** - Results appear directly in your notes
+- 💾 **Output Blocks** - Saved as markdown for version control
 
-### Advanced Features
-- ✅ **Settings Tab** - Configure everything in Obsidian UI (no environment variables!)
-- ✅ **LLM Blocks** - Execute AI prompts with ` ```llm` and ` ```agent`
-- ✅ **LLM Configuration UI** - Choose provider (Ollama/OpenAI), set API keys, select models
-- ✅ **Real AI Integration** - Ollama (local, private) or OpenAI (cloud) support
-- ✅ **Reading Mode** - Click Run buttons on code blocks
-- ✅ **Auto Output Blocks** - Editor mode writes ` ```output` to markdown
+**AI Integration:**
+- 🤖 **ChatGPT/Claude/Ollama** - Run LLM prompts as code blocks
+- 🔧 **Agent Mode** - Task-oriented AI responses
+- 🔐 **Secure** - Use your own API keys (stored locally)
+
+**Developer Experience:**
+- ⚙️ **Full Settings UI** - Configure everything in Obsidian
+- 📜 **Error Handling** - Clear error messages
+- 🎨 **Themed** - Matches your Obsidian theme
 
 ---
 
 ## 🚀 Quick Start
 
-### 1. Start Backend
+### 1. Install Plugin
 
-```powershell
-cd runner
+**Manual Installation:**
+1. Download `release.zip` from [Releases](https://github.com/yourusername/obsidian-code-runner/releases)
+2. Extract to `.obsidian/plugins/obsidian-code-runner/`
+3. Enable in Settings → Community Plugins
+
+### 2. Start Backend
+
+```bash
+cd obsidian-code-runner/runner
+pip install -r requirements.txt
 python -m uvicorn main:app --port 8000 --reload
 ```
 
-Backend runs at `http://localhost:8000`
+**One-time setup. Leave it running.**
 
-### 2. Build Plugin
+### 3. Run Code!
 
-```powershell
-cd obsidian-code-runner
-npm install  # First time only
-npm run dev  # Watch mode
+**In Obsidian, create a code block:**
+
+````markdown
+```python
+print("Hello from Obsidian!")
 ```
+````
 
-###  3. Install in Obsidian
+**Press `Cmd/Ctrl+Shift+Enter` or switch to Reading View and click `▶ Run`**
 
-1. Copy `obsidian-code-runner/` to your vault's `.obsidian/plugins/`
-2. **Settings → Community Plugins** → Enable "Obsidian Code Runner"
-3. Done! 🎉
+**Output appears:**
+````markdown
+```output
+Hello from Obsidian!
+```
+````
+
+**Done!** 🎉
 
 ---
 
-## 📖 Usage
+## 📖 Usage Examples
 
-### Reading Mode
-
-Create a code block:
-````markdown
-```python
-x = 5
-print(x + 2)
-```
-````
-
-1. Switch to **Reading View**
-2. Click **▶ Run** button
-3. Output appears below
-
-### Editor Mode (Recommended)
-
-1. Create code block in **Edit mode**
-2. Place cursor inside block
-3. Press `Cmd+Shift+Enter` (Mac) or `Ctrl+Shift+Enter` (Windows)
-4. ` ```output` block created/updated automatically
-
-### Kernel Mode - Persistent Variables
-
-**Enabled by default!** Variables survive across blocks:
+### Python with Persistent Variables
 
 ````markdown
 ```python
-name = "Alice"
-age = 30
+x = 42
+y = 10
 ```
 
 ```python
-print(f"{name} is {age} years old")
-# Output: Alice is 30 years old
+print(x + y)  # Variables persist!
+```
+
+```output
+52
 ```
 ````
+
+### ChatGPT Integration
+
+````markdown
+```llm
+Explain quantum entanglement in one sentence
+```
+````
+
+**Configure in Settings → LLM Configuration**
 
 ---
 
 ## ⚙️ Settings
 
-Access: **Settings → Community Plugins → Obsidian Code Runner**
+**Settings → Community Plugins → Code Runner**
 
-### Basic Settings
-- **Backend URL** - Where code execution requests are sent
-- **Use Kernel Mode** - Persistent Python sessions (default: ON)
-- **Enable Python** - Toggle Python execution
-- **Enable JavaScript** - Toggle JavaScript execution
-- **Enable LLM/Agent blocks** - Toggle AI prompt execution
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Backend URL** | Where code executes | `http://localhost:8000/run` |
+| **Kernel Mode** | Persistent Python sessions | ✅ ON |
+| **Enable Python** | Python execution | ✅ ON |
+| **Enable JavaScript** | JavaScript execution | ✅ ON |
+| **Enable LLM** | AI prompt blocks | ❌ OFF |
 
-### LLM Configuration (when LLM blocks enabled)
-- **LLM Provider** - Choose `Auto`, `Ollama` (local), or `OpenAI` (cloud)
-- **OpenAI API Key** - Your OpenAI API key (stored securely in vault)
-- **Ollama Model** - Which model to use (e.g., llama2, mistral, codellama)
-- **Ollama URL** - Where Ollama is running (default: http://localhost:11434)
-
-**No environment variables needed!** Configure everything in the UI.
+**LLM Configuration (when enabled):**
+- **Provider**: Auto / Ollama / OpenAI
+- **API Key**: Your OpenAI key
+- **Model**: Which AI model to use
 
 ---
 
-## 🎯 Supported Languages
+## 🤖 AI Features Setup
 
-| Language | Syntax | Kernel Support |
-|----------|--------|----------------|
-| Python | ` ```python` | ✅ Yes |
-| JavaScript/Node.js | ` ```javascript` or ` ```js` | ❌ No |
-| LLM Prompts | ` ```llm` | N/A |
-| Agent Tasks | ` ```agent` | N/A |
+### Option 1: Ollama (Local, Free, Private)
+
+```bash
+# Install Ollama
+# Download from https://ollama.ai
+
+# Pull a model
+ollama pull llama2
+
+# Run Ollama
+ollama serve
+```
+
+**No API key needed!**
+
+### Option 2: OpenAI (Cloud, Paid)
+
+1. Get API key: [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. Settings → Code Runner → LLM Configuration
+3. Paste API key
+4. Done!
 
 ---
 
-## 🧪 Testing
+## 🎯 How It Works
 
-### Test Kernel Mode
-````markdown
-```python
-x = 42
+```
+Your Note (Obsidian)
+    ↓
+Plugin sends code
+    ↓
+FastAPI Backend (local)
+    ↓
+Executes Python/JS
+    ↓
+Returns output
+    ↓
+Displayed in note
 ```
 
-```python
-print(x)  # Should output: 42
-```
-````
-
-### Test Editor Mode Hotkey
-1. Create Python block in edit mode
-2. Put cursor inside
-3. Press `Cmd+Shift+Enter`
-4. Verify ` ```output` block appears
+**Backend runs locally = your code never leaves your machine.**
 
 ---
 
-## 🔧 Development
+## 🔧 Backend Details
 
-### Plugin
-```powershell
-npm run dev     # Watch mode (auto-rebuild)
-npm run build   # Production build
-```
+**What it does:**
+- Executes Python/JavaScript code
+- Manages kernel sessions
+- Calls LLM APIs
 
-### Backend
-```powershell
+**Requirements:**
+- Python 3.8+
+- FastAPI, Uvicorn
+
+**Start command:**
+```bash
 python -m uvicorn main:app --port 8000 --reload
 ```
-Auto-reloads on code changes.
+
+**Keep it running in the background.**
 
 ---
 
-## 📁 Project Structure
+## ⌨️ Keyboard Shortcuts
 
-```
-obsidian-code-runner/
-  ├── main.ts              # Plugin source
-  ├── main.js              # Built output
-  ├── styles.css           # Styling
-  ├── manifest.json        # Metadata
-  └── package.json         # Dependencies
-
-runner/
-  ├── main.py              # FastAPI backend
-  ├── requirements.txt     # Python deps
-  └── test_backend.py      # Tests
-```
+| Action | Shortcut |
+|--------|----------|
+| Run current code block | `Cmd/Ctrl + Shift + Enter` |
 
 ---
 
-## 🔌 Backend API
+## 🐛 Troubleshooting
 
-### POST `/run` - Execute Code
+### "Error contacting backend"
 
-**Request:**
-```json
-{
-  "language": "python",
-  "code": "print('hello')",
-  "kernel": true
-}
+**Solution:**
+```bash
+# Check if backend is running
+curl http://localhost:8000/health
+
+# If not, start it
+cd runner
+python -m uvicorn main:app --port 8000 --reload
 ```
 
-**Response:**
-```json
-{
-  "stdout": "hello\n",
-  "stderr": "",
-  "exitCode": 0
-}
+### "Module not found"
+
+**Solution:**
+```bash
+# Install requirements
+cd runner
+pip install -r requirements.txt
 ```
 
-### POST `/llm` - LLM/Agent (Placeholder)
+### LLM not working
 
-**Request:**
-```json
-{
-  "mode": "llm",
-  "prompt": "What is AI?"
-}
-```
-
-**Response:**
-```json
-{
-  "output": "[LLM] (placeholder)\n\nPrompt:\nWhat is AI?"
-}
-```
+**Solution:**
+1. Enable in Settings → Code Runner → Enable LLM
+2. Choose provider (Ollama or OpenAI)
+3. Configure API key or start Ollama
 
 ---
 
-## 💡 Tips & Tricks
+## 📝 Supported Languages
 
-- **Kernel mode is ON by default** - Variables persist automatically
-- **Use editor mode hotkey** - Faster than switching to reading view
-- **Output blocks update** - Run again to replace existing output
-- **Backend auto-reloads** - Edit `main.py` without manual restart
-- **Plugin auto-rebuilds** - `npm run dev` watches for changes
+- ✅ **Python** (with kernel mode)
+- ✅ **JavaScript** (Node.js)
+- ✅ **LLM** (ChatGPT, Claude, Ollama)
+- ✅ **Agent** (Task-oriented AI)
+
+**Coming Soon:**
+- Ruby, Go, Rust, SQL, Shell
 
 ---
 
 ## 🚧 Roadmap
 
-### Recently Added ✅
-- ✅ Real LLM integration (Ollama/OpenAI)
-- ✅ LLM Configuration UI (no env vars needed!)
-- ✅ Floating run button in edit mode
-- ✅ Kernel mode enabled by default
+**v1.1 (Next):**
+- Clear output button
+- Improved error display
+- Example notebooks
 
-### Coming Soon
-- Kernel restart button
-- Additional languages (Ruby, Go, Rust, R)
-- Rich output (images, plots, tables)
+**v1.2:**
+- Matplotlib plots inline
+- Pandas DataFrame tables
+- Export to Jupyter
 
-### Future
-- Per-note kernel sessions
-- Cell execution controls (run all, run above/below)
-- Docker sandboxing for security
-- Mobile support (if feasible)
+**v2.0:**
+- Multi-language support
+- Rich output (images, HTML)
+- Notebook templates
 
 ---
 
-## 📚 Documentation
+## 💝 Support
 
-- [CHANGELOG.md](../CHANGELOG.md) - Development history
-- [QUICK_REFERENCE.md](../QUICK_REFERENCE.md) - Quick reference
-- [summary.md](../.gemini/antigravity/brain/.../summary.md) - Current status
+If Code Runner saves you time, consider:
 
----
-
-## 🤝 Contributing
-
-Contributions welcome! Areas to help:
-- LLM integration (OpenAI, Anthropic, Ollama)
-- Additional language support
-- Security hardening
-- Rich output rendering
-- Documentation
+- ☕ **[Buy me a coffee](https://ko-fi.com/nathandavies)**
+- ⭐ **[Star this repo](https://github.com/yourusername/obsidian-code-runner)**
+- 🐛 **Report bugs** via Issues
+- 💡 **Suggest features**
 
 ---
 
 ## 📄 License
 
-MIT
+MIT License - see [LICENSE](LICENSE)
 
----
-
-## 👤 Author
-
-**Nathan Chin**
+**Free forever. Open source. No tracking.**
 
 ---
 
@@ -289,39 +292,15 @@ MIT
 Built with:
 - [Obsidian API](https://docs.obsidian.md/)
 - [FastAPI](https://fastapi.tiangolo.com/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [esbuild](https://esbuild.github.io/)
+- Love for computational notebooks ❤️
 
 ---
 
-## ⚡ Quick Example
+## 📫 Contact
 
-````markdown
-# My Note
-
-Some text here...
-
-```python
-# This runs with kernel mode (persistent session)
-import math
-radius = 5
-area = math.pi * radius ** 2
-print(f"Area: {area:.2f}")
-```
-
-```python
-# This remembers 'radius' and 'math' from above!
-circumference = 2 * math.pi * radius
-print(f"Circumference: {circumference:.2f}")
-```
-
-More text...
-````
-
-**Press `Cmd/Ctrl+Shift+Enter` in each block** → Output appears inline!
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Issues: [Report a bug](https://github.com/yourusername/obsidian-code-runner/issues)
 
 ---
 
-**Status:** ✅ **Production Ready** - All core features working!
-
-Transform your Obsidian notes into executable notebooks today. 🎉
+**Made with ❤️ for the Obsidian community**

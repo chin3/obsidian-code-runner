@@ -1,10 +1,10 @@
 {
   "id": "obsidian-code-runner",
-  "name": "Obsidian Code Runner",
-  "version": "0.0.1",
+  "name": "Code Runner",
+  "version": "1.0.0",
   "minAppVersion": "1.5.0",
-  "description": "Run code blocks (Python/JS) directly inside Obsidian, Jupyter-style.",
+  "description": "Execute Python/JS with persistent kernel & ChatGPT integration. Full Python packages, local execution.",
   "author": "Nathan Chin",
-  "authorUrl": "",
+  "authorUrl": "https://github.com/yourusername",
   "isDesktopOnly": true
 }
