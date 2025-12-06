@@ -338,8 +338,8 @@ pip install -r requirements.txt
 
 If Code Runner saves you time, consider:
 
-- ☕ **[Buy me a coffee](https://ko-fi.com/nathandavies)**
-- ⭐ **[Star this repo](https://github.com/yourusername/obsidian-code-runner)**
+- ☕ **[Buy me a coffee](https://ko-fi.com/crimsundev)**
+- ⭐ **[Star this repo](https://github.com/chin3/obsidian-plugins-obsidian-code-runner)**
 - 🐛 **Report bugs** via Issues
 - 💡 **Suggest features**
 
