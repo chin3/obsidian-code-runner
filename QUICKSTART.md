@@ -120,13 +120,3 @@ All directly inside Obsidian.
 
 Happy coding! 💻✨
 
----
-
-If you want, I can also generate a:
-
-📘 “Showcase Notebook”  
-📊 Data science example notebook  
-🤖 AI/Agent workflow notebook  
-🧪 Developer test suite notebook
-
-Just say **"make the showcase notebook"**.
