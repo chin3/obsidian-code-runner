@@ -47,7 +47,7 @@ Unlike sandboxed solutions, Code Runner uses a **real Python kernel** with persi
 ### 1. Install Plugin
 
 **Manual Installation:**
-1. Download `release.zip` from [Releases](https://github.com/yourusername/obsidian-code-runner/releases)
+1. Download `release.zip` from [Releases](https://github.com/chin3/obsidian-code-runner/releases)
 2. Extract to `.obsidian/plugins/obsidian-code-runner/`
 3. Enable in Settings → Community Plugins
 
@@ -348,7 +348,7 @@ pip install -r requirements.txt
 If Code Runner saves you time, consider:
 
 - ☕ **[Buy me a coffee](https://ko-fi.com/crimsundev)**
-- ⭐ **[Star this repo](https://github.com/chin3/obsidian-plugins-obsidian-code-runner)**
+- ⭐ **[Star this repo](https://github.com/chin3/obsidian-code-runner)**
 - 🐛 **Report bugs** via Issues
 - 💡 **Suggest features**
 
