@@ -63,7 +63,6 @@ Put your cursor inside the block below and press:
 
 **Cmd/Ctrl + Shift + Enter**
 
-````markdown
 ```javascript
 console.log("Hello from JS");
 console.log(1 + 2 + 3);
@@ -74,7 +73,7 @@ Hello from JS
 6
 
 ```
-````
+
 
 Expected output:
 
@@ -89,11 +88,11 @@ Hello from JS
 
 (Enable LLM support in Code Runner settings)
 
-````markdown
+
 ```llm
 hello who are you
 ```
-````
+
 
 Expected output (may vary):
 
