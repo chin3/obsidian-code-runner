@@ -13,7 +13,7 @@ Unlike sandboxed solutions, Code Runner uses a **real Python kernel** with persi
 **What makes this different:**
 - ✅ **Full Python** - Use pandas, scikit-learn, ANY package
 - 🧠 **True Kernel** - Variables persist like Jupyter
-- 🤖 **ChatGPT/Claude** - LLM blocks for AI-assisted workflows  
+- 🤖 **ChatGPT** - LLM blocks for AI-assisted workflows  
 - 🔒 **100% Local** - Code never leaves your machine
 - ⚡ **Fast** - Direct execution, no sandboxing overhead
 
@@ -31,7 +31,7 @@ Unlike sandboxed solutions, Code Runner uses a **real Python kernel** with persi
 - 💾 **Output Blocks** - Saved as markdown for version control
 
 **AI Integration:**
-- 🤖 **ChatGPT/Claude/Ollama** - Run LLM prompts as code blocks
+- 🤖 **ChatGPT/Ollama** - Run LLM prompts as code blocks
 - 🔧 **Agent Mode** - Task-oriented AI responses
 - 🔐 **Secure** - Use your own API keys (stored locally)
 
@@ -70,6 +70,7 @@ python -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload
 print("Hello from Obsidian!")
 ```
 ````
+![readingmodepythonexecution](https://github.com/user-attachments/assets/b5850fd1-adb9-4f0d-863d-b35e0bf5278d)
 
 **Press `Cmd/Ctrl+Shift+Enter` or switch to Reading View and click `▶ Run`**
 
@@ -79,6 +80,7 @@ print("Hello from Obsidian!")
 Hello from Obsidian!
 ```
 ````
+![hotkey](https://github.com/user-attachments/assets/ab1abcc9-a0ac-494d-83da-65122bef2c40)
 
 **Done!** 🎉
 
@@ -103,6 +105,8 @@ print(x + y)  # Variables persist!
 ```
 ````
 
+
+
 ### ChatGPT Integration
 
 ````markdown
@@ -110,6 +114,7 @@ print(x + y)  # Variables persist!
 Explain quantum entanglement in one sentence
 ```
 ````
+![llm-integration](https://github.com/user-attachments/assets/cd059b94-d34d-4905-8cf4-cfc040aff267)
 
 **Configure in Settings → LLM Configuration**
 
@@ -310,10 +315,11 @@ pip install -r requirements.txt
 
 - ✅ **Python** (with kernel mode)
 - ✅ **JavaScript** (Node.js)
-- ✅ **LLM** (ChatGPT, Claude, Ollama)
+- ✅ **LLM** (ChatGPT, Ollama)
 - ✅ **Agent** (Task-oriented AI)
 
 **Coming Soon:**
+- Claude
 - Ruby, Go, Rust, SQL, Shell
 
 ---
@@ -361,7 +367,6 @@ MIT License - see [LICENSE](LICENSE)
 Built with:
 - [Obsidian API](https://docs.obsidian.md/)
 - [FastAPI](https://fastapi.tiangolo.com/)
-- Love for computational notebooks ❤️
 
 ---
 
@@ -370,6 +375,4 @@ Built with:
 - GitHub: [@chin3](https://github.com/chin3)
 - Issues: [Report a bug](https://github.com/chin3/obsidian-plugins-obsidian-code-runner/issues)
 
----
 
-**Made with ❤️ for the Obsidian community**
