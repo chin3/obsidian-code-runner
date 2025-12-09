@@ -1,5 +1,8 @@
 # Code Runner for Obsidian
 
+🚧 Status: Early Alpha — expect bugs!
+This plugin is under active development. Feedback welcome!
+
 **Execute Python & JavaScript with full package access + ChatGPT integration.** 
 
 Unlike sandboxed solutions, Code Runner uses a **real Python kernel** with persistent sessions and unlimited package support.
