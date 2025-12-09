@@ -3,10 +3,12 @@
     "version": "0.0.1",
     "description": "Run code blocks (Python/JS) directly inside Obsidian, Jupyter-style.",
     "main": "main.js",
+    "type": "module",
     "scripts": {
         "dev": "node esbuild.config.mjs",
         "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production",
-        "version": "node version-bump.mjs && git add manifest.json versions.json"
+        "version": "node version-bump.mjs && git add manifest.json versions.json",
+        "release": "node scripts/release.js"
     },
     "keywords": [],
     "author": "Nathan Chin",
@@ -15,8 +17,10 @@
         "@types/node": "^16.11.6",
         "@typescript-eslint/eslint-plugin": "5.29.0",
         "@typescript-eslint/parser": "5.29.0",
+        "archiver": "^7.0.1",
         "builtin-modules": "3.3.0",
         "esbuild": "0.17.3",
+        "fs-extra": "^11.2.0",
         "obsidian": "latest",
         "tslib": "2.4.0",
         "typescript": "4.7.4"

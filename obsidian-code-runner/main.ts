@@ -94,8 +94,41 @@ export default class CodeRunnerPlugin extends Plugin {
     await this.saveData(this.settings);
   }
 
+  /**
+   * Remove common leading whitespace from code lines.
+   * This is needed for nested code blocks (in lists, blockquotes) where
+   * the entire block is indented in the markdown source.
+   */
+  private dedent(lines: string[]): string {
+    if (lines.length === 0) return "";
+
+    // Find minimum indentation (ignoring empty lines)
+    let minIndent = Infinity;
+    for (const line of lines) {
+      if (line.trim().length === 0) continue; // Skip empty lines
+      const indent = line.search(/\S/); // Find first non-whitespace character
+      if (indent !== -1 && indent < minIndent) {
+        minIndent = indent;
+      }
+    }
+
+    // If all lines are empty or no indentation found, return as-is
+    if (minIndent === Infinity || minIndent === 0) {
+      return lines.join("\n");
+    }
+
+    // Remove the common indentation from all lines
+    const dedented = lines.map(line => {
+      if (line.trim().length === 0) return ""; // Keep empty lines empty
+      return line.substring(minIndent);
+    });
+
+    return dedented.join("\n");
+  }
+
   private enhanceCodeBlocks(container: HTMLElement) {
-    const codeBlocks = container.querySelectorAll("pre > code");
+    // Use "pre code" to catch nested blocks (in blockquotes, lists, etc.)
+    const codeBlocks = container.querySelectorAll("pre code");
     codeBlocks.forEach((codeEl) => {
       const pre = codeEl.parentElement;
       if (!pre) return;
@@ -105,7 +138,8 @@ export default class CodeRunnerPlugin extends Plugin {
       );
       if (!languageClass) return;
 
-      const language = languageClass.replace("language-", "").toLowerCase();
+      // Normalize language string (trim whitespace that may appear in nested contexts)
+      const language = languageClass.replace("language-", "").trim().toLowerCase();
 
       // LLM blocks
       if (language === "llm" || language === "agent") {
@@ -130,7 +164,8 @@ export default class CodeRunnerPlugin extends Plugin {
 
   private styleOutputBlocks(container: HTMLElement) {
     // Find all output blocks (```output) and make them scrollable
-    const codeBlocks = container.querySelectorAll("pre > code");
+    // Use "pre code" to catch nested output blocks
+    const codeBlocks = container.querySelectorAll("pre code");
     codeBlocks.forEach((codeEl) => {
       const languageClass = Array.from(codeEl.classList).find((cls) =>
         cls.startsWith("language-")
@@ -348,7 +383,7 @@ export default class CodeRunnerPlugin extends Plugin {
     const cursor = editor.getCursor();
     const lineCount = editor.lineCount();
 
-    // Find opening fence
+    // Find opening fence (handle indented fences for nested blocks)
     let startLine = cursor.line;
     while (startLine >= 0) {
       const line = editor.getLine(startLine);
@@ -361,12 +396,14 @@ export default class CodeRunnerPlugin extends Plugin {
     }
 
     const openingLine = editor.getLine(startLine);
+    // Improved regex to handle potential whitespace and extract language
     const fenceMatch = openingLine.trim().match(/^```(\w+)?/);
     if (!fenceMatch) {
       new Notice("Not in a code block.");
       return;
     }
-    const languageRaw = (fenceMatch[1] || "").toLowerCase();
+    // Normalize language string (trim any extra whitespace)
+    const languageRaw = (fenceMatch[1] || "").trim().toLowerCase();
     let language: string = languageRaw;
 
     // LLM or agent blocks
@@ -388,7 +425,8 @@ export default class CodeRunnerPlugin extends Plugin {
     for (let i = startLine + 1; i < endLine; i++) {
       codeLines.push(editor.getLine(i));
     }
-    const code = codeLines.join("\n");
+    // Remove common indentation for nested blocks (in lists, blockquotes, etc.)
+    const code = this.dedent(codeLines);
 
     // Look for an existing ```output block immediately after
     let outputStart = endLine + 1;
@@ -475,7 +513,7 @@ export default class CodeRunnerPlugin extends Plugin {
     const isJS = language === "javascript" || language === "js";
 
     if (!isPython && !isJS) {
-      new Notice("Language not supported in editor mode.");
+      new Notice(`Language '${language}' not supported in editor mode (Python/JS only).`);
       return;
     }
 

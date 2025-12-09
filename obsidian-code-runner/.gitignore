@@ -12,3 +12,7 @@ node_modules
 
 # OS
 .DS_Store
+
+# Release artifacts
+release/
+release.zip
